@@ -3,11 +3,18 @@
   <groupId>br.com.jonathankbp</groupId>
   <artifactId>TestesUnitarios</artifactId>
   <version>1.0-SNAPSHOT</version>
-  
-  <dependencies>
-  </dependencies>
+
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+  </dependencies>
+
 </project>
