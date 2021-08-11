@@ -1,13 +1,11 @@
-package br.ce.wcaquino.servicos;
-
-import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
+package br.com.jonathankbp.servicos;
 
 import java.util.Date;
 
-import br.ce.wcaquino.entidades.Filme;
-import br.ce.wcaquino.entidades.Locacao;
-import br.ce.wcaquino.entidades.Usuario;
-import br.ce.wcaquino.utils.DataUtils;
+import br.com.jonathankbp.entidades.Filme;
+import br.com.jonathankbp.entidades.Locacao;
+import br.com.jonathankbp.entidades.Usuario;
+import br.com.jonathankbp.utils.DataUtils;
 
 public class LocacaoService {
 	
@@ -20,7 +18,7 @@ public class LocacaoService {
 
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
-		dataEntrega = adicionarDias(dataEntrega, 1);
+		dataEntrega = DataUtils.adicionarDias(dataEntrega, 1);
 		locacao.setDataRetorno(dataEntrega);
 		
 		//Salvando a locacao...	
