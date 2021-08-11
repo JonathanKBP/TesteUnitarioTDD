@@ -4,10 +4,13 @@ import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
 import br.com.jonathankbp.utils.DataUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
+
+import static br.com.jonathankbp.utils.DataUtils.isMesmaData;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 public class LocacaoServiceTest {
 
@@ -22,9 +25,9 @@ public class LocacaoServiceTest {
         Locacao locacao = service.alugarFilme(usuario, filme);
 
         //verificação
-        Assert.assertEquals(5.0, locacao.getValor(), 0.01);
-        Assert.assertTrue(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()));
-        Assert.assertTrue(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
+        assertThat(locacao.getValor(), is(5.0));
+        assertThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+        assertThat(isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
 
     }
 }
