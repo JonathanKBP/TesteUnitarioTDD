@@ -7,6 +7,7 @@ import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
 import br.com.jonathankbp.utils.DataUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -20,16 +21,23 @@ import static org.junit.Assert.*;
 
 public class LocacaoServiceTest {
 
+    private LocacaoService service;
+
     @Rule
     public ErrorCollector error = new ErrorCollector();
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    @Before
+    public void setup() {
+        service = new LocacaoService();
+    }
+
     @Test
     public void testeLocacao() throws Exception {
         //cenario
-        LocacaoService service = new LocacaoService();
+
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 2, 5.0);
 
@@ -46,7 +54,6 @@ public class LocacaoServiceTest {
     @Test(expected = FilmeSemEstoqueException.class)
     public void TestLocacao_filmeSemEstoque() throws Exception {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -57,7 +64,6 @@ public class LocacaoServiceTest {
     @Test
     public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Filme filme = new Filme("Filme 1", 1, 5.0);
 
         //acao
@@ -74,7 +80,6 @@ public class LocacaoServiceTest {
     @Test
     public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
 
         exception.expect(LocadoraException.class);
