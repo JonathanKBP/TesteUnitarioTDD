@@ -2,6 +2,8 @@ package br.com.jonathankbp.servicos;
 
 import java.util.Date;
 
+import br.com.jonathankbp.Exception.FilmeSemEstoqueException;
+import br.com.jonathankbp.Exception.LocadoraException;
 import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
@@ -11,9 +13,17 @@ import org.junit.Test;
 
 public class LocacaoService {
 
-	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
+	public Locacao alugarFilme(Usuario usuario, Filme filme) throws FilmeSemEstoqueException, LocadoraException {
+		if(usuario == null) {
+			throw new LocadoraException("Usuario vazio");
+		}
+
+		if (filme == null) {
+			throw new LocadoraException("Filme vazio");
+		}
+
 		if(filme.getEstoque() == 0) {
-			throw new Exception("Filme sem estoque");
+			throw new FilmeSemEstoqueException();
 		}
 
 		Locacao locacao = new Locacao();
