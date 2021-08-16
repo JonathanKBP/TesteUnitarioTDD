@@ -5,6 +5,7 @@ import br.com.jonathankbp.Exception.LocadoraException;
 import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
+import br.com.jonathankbp.matchers.MatchersProprios;
 import br.com.jonathankbp.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
@@ -15,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.com.jonathankbp.matchers.MatchersProprios.*;
 import static br.com.jonathankbp.utils.DataUtils.isMesmaData;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -105,7 +107,8 @@ public class LocacaoServiceTest {
 
         //vericacao
         boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
-        assertTrue(ehSegunda);
+
+        assertThat(retorno.getDataRetorno(), caiNumaSegunda());
     }
 
 //  Opções para forma elegante TestLocacao_filmeSemEstoque
