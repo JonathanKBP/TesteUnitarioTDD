@@ -49,9 +49,8 @@ public class LocacaoServiceTest {
 
         //verificação
         error.checkThat(locacao.getValor(), is(5.0));
-        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        error.checkThat(isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
-
+        error.checkThat(locacao.getDataLocacao(), ehHoje());
+        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
     }
 
     @Test(expected = FilmeSemEstoqueException.class)
