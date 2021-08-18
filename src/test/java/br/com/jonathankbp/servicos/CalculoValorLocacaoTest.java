@@ -5,6 +5,8 @@ import br.com.jonathankbp.Exception.LocadoraException;
 import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
+import dao.LocacaoDAO;
+import dao.LocacaoDaoFake;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +59,8 @@ public class CalculoValorLocacaoTest {
     @Before
     public void setup() {
         service = new LocacaoService();
+        LocacaoDAO dao = new LocacaoDaoFake();
+        service.setLocacaoDAO(dao);
     }
 
     @Test

@@ -7,6 +7,8 @@ import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
 import br.com.jonathankbp.utils.DataUtils;
 import buildermaster.BuilderMaster;
+import dao.LocacaoDAO;
+import dao.LocacaoDaoFake;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
@@ -36,6 +38,8 @@ public class LocacaoServiceTest {
     @Before
     public void setup() {
         service = new LocacaoService();
+        LocacaoDAO dao = new LocacaoDaoFake();
+        service.setLocacaoDAO(dao);
     }
 
     @Test
