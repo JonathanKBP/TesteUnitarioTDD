@@ -2,18 +2,17 @@ package br.com.jonathankbp.servicos;
 
 import br.com.jonathankbp.Exception.FilmeSemEstoqueException;
 import br.com.jonathankbp.Exception.LocadoraException;
-import br.com.jonathankbp.builders.LocacaoBuilder;
 import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
-import br.com.jonathankbp.utils.DataUtils;
-import buildermaster.BuilderMaster;
 import dao.LocacaoDAO;
-import dao.LocacaoDaoFake;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,10 +32,14 @@ import static org.mockito.Mockito.when;
 
 public class LocacaoServiceTest {
 
+    @InjectMocks
     private LocacaoService service;
 
+    @Mock
     private SPCService spc;
+    @Mock
     private LocacaoDAO dao;
+    @Mock
     private EmailService email;
 
     @Rule
@@ -47,13 +50,7 @@ public class LocacaoServiceTest {
 
     @Before
     public void setup() {
-        service = new LocacaoService();
-        dao = Mockito.mock(LocacaoDAO.class);
-        service.setLocacaoDAO(dao);
-        spc = Mockito.mock(SPCService.class);
-        service.setSPCService(spc);
-        email = Mockito.mock(EmailService.class);
-        service.setEmailService(email);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

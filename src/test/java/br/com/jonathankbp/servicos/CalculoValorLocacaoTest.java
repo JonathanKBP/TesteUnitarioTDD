@@ -6,12 +6,13 @@ import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
 import dao.LocacaoDAO;
-import dao.LocacaoDaoFake;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,14 @@ import static org.junit.runners.Parameterized.*;
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
 
+    @InjectMocks
     private LocacaoService service;
+
+    @Mock
+    private LocacaoDAO dao;
+
+    @Mock
+    private SPCService spc;
 
     @Parameter
     public List<Filme> filmes;
@@ -59,11 +67,7 @@ public class CalculoValorLocacaoTest {
 
     @Before
     public void setup() {
-        service = new LocacaoService();
-        LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
-        service.setLocacaoDAO(dao);
-        SPCService spc = Mockito.mock(SPCService.class);
-        service.setSPCService(spc);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
