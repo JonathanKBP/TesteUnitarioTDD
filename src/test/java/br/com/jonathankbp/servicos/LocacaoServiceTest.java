@@ -2,6 +2,7 @@ package br.com.jonathankbp.servicos;
 
 import br.com.jonathankbp.Exception.FilmeSemEstoqueException;
 import br.com.jonathankbp.Exception.LocadoraException;
+import br.com.jonathankbp.builders.LocacaoBuilder;
 import br.com.jonathankbp.entidades.Filme;
 import br.com.jonathankbp.entidades.Locacao;
 import br.com.jonathankbp.entidades.Usuario;
@@ -21,10 +22,13 @@ import java.util.List;
 
 import static br.com.jonathankbp.builders.FilmeBuilder.umFilme;
 import static br.com.jonathankbp.builders.FilmeBuilder.umFilmeSemEstoque;
+import static br.com.jonathankbp.builders.LocacaoBuilder.umLocacao;
 import static br.com.jonathankbp.builders.UsuarioBuilder.umUsuario;
 import static br.com.jonathankbp.matchers.MatchersProprios.*;
+import static br.com.jonathankbp.utils.DataUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class LocacaoServiceTest {
@@ -32,8 +36,8 @@ public class LocacaoServiceTest {
     private LocacaoService service;
 
     private SPCService spc;
-
     private LocacaoDAO dao;
+    private EmailService email;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -48,11 +52,13 @@ public class LocacaoServiceTest {
         service.setLocacaoDAO(dao);
         spc = Mockito.mock(SPCService.class);
         service.setSPCService(spc);
+        email = Mockito.mock(EmailService.class);
+        service.setEmailService(email);
     }
 
     @Test
     public void DeveAlugarFilme() throws Exception {
-        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+        Assume.assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
         //cenario
         Usuario usuario = umUsuario().agora();
@@ -109,7 +115,7 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
-        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+        Assume.assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
         //Cenario
         Usuario usuario = umUsuario().agora();
@@ -119,24 +125,47 @@ public class LocacaoServiceTest {
         Locacao retorno = service.alugarFilme(usuario, filmes);
 
         //vericacao
-        boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
+        boolean ehSegunda = verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
 
         assertThat(retorno.getDataRetorno(), caiNumaSegunda());
     }
 
    @Test
-    public void naoDeveAlugarFilmeparaNegativadoSPC() throws FilmeSemEstoqueException, LocadoraException {
+    public void naoDeveAlugarFilmeparaNegativadoSPC() throws FilmeSemEstoqueException {
         //Cenario
        Usuario usuario = umUsuario().agora();
        List<Filme> filmes = Arrays.asList(umFilme().agora());
 
        when(spc.possuiNegativacao(usuario)).thenReturn(true);
 
-       exception.expect(LocadoraException.class);
-       exception.expectMessage("Usuário Negativado");
+       //acao
+       try {
+           service.alugarFilme(usuario, filmes);
+       //verificacao
+           Assert.fail();
+       } catch (LocadoraException e) {
+           Assert.assertThat(e.getMessage(), is("Usuário Negativado"));
+       }
+
+       verify(spc).possuiNegativacao(usuario);
+   }
+
+   @Test
+    public void deveEnviarEmailLocacoesAtrasadas(){
+        //Cenario
+        Usuario usuario = umUsuario().agora();
+        List<Locacao> locacoes = Arrays.asList(
+                umLocacao()
+                    .comUsuario(usuario)
+                    .comDataRetorno(obterDataComDiferencaDias(-2))
+                    .agora());
+        when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 
        //acao
-       service.alugarFilme(usuario, filmes);
+       service.notificarAtraso();
+
+       //verificacao
+       verify(email).notificarAtraso(usuario);
    }
 
 //  Opções para forma elegante TestLocacao_filmeSemEstoque
