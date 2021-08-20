@@ -128,7 +128,7 @@ public class LocacaoServiceTest {
     }
 
    @Test
-    public void naoDeveAlugarFilmeparaNegativadoSPC() throws FilmeSemEstoqueException {
+    public void naoDeveAlugarFilmeparaNegativadoSPC() throws Exception {
         //Cenario
        Usuario usuario = umUsuario().agora();
        List<Filme> filmes = Arrays.asList(umFilme().agora());
@@ -171,34 +171,21 @@ public class LocacaoServiceTest {
        Mockito.verifyNoMoreInteractions(email);
    }
 
-//  Opções para forma elegante TestLocacao_filmeSemEstoque
-//    @Test
-//    public void TestLocacao_filmeSemEstoque_2() {
-//        //cenario
-//        LocacaoService service = new LocacaoService();
-//        Usuario usuario = new Usuario("Usuario 1");
-//        Filme filme = new Filme("Filme 1", 0, 5.0);
-//
-//        try {
-//            //acao
-//            service.alugarFilme(usuario, filme);
-//            Assert.fail("Deveria ter lancado uma excecao");
-//        } catch (Exception e) {
-//            assertThat(e.getMessage(), is("Filme sem estoque"));
-//        }
-//    }
-//
-//    @Test
-//    public void TestLocacao_filmeSemEstoque_3() throws Exception {
-//        //cenario
-//        LocacaoService service = new LocacaoService();
-//        Usuario usuario = new Usuario("Usuario 1");
-//        Filme filme = new Filme("Filme 1", 0, 5.0);
-//
-//        exception.expect(Exception.class);
-//        exception.expectMessage("Filme sem estoque");
-//
-//        //acao
-//        service.alugarFilme(usuario, filme);
-//    }
+   @Test
+    public void deveTratarErroNoSPC() throws Exception {
+       //Cenario
+       Usuario usuario = umUsuario().agora();
+       List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+       when(spc.possuiNegativacao(usuario)).thenThrow(new Exception("Falha catastrófica"));
+
+       //Verificacao
+       exception.expect(LocadoraException.class);
+       exception.expectMessage("Problema com SPC, tente novamente");
+
+       //Acao
+       service.alugarFilme(usuario, filmes);
+
+
+   }
 }
