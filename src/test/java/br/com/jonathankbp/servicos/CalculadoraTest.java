@@ -1,10 +1,13 @@
 package br.com.jonathankbp.servicos;
 
 import br.com.jonathankbp.Exception.NaoPodeDividirPorZeroException;
+import br.com.jonathankbp.runners.ParallelRunner;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(ParallelRunner.class)
 public class CalculadoraTest {
 
     private Calculadora calc;
