@@ -1,5 +1,6 @@
 package br.com.jonathankbp.servicos;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +52,9 @@ public class LocacaoService {
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = DataUtils.adicionarDias(dataEntrega, 1);
+		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)){
+			dataEntrega = DataUtils.adicionarDias(dataEntrega, 1);
+		}
 		locacao.setDataRetorno(dataEntrega);
 		
 		//Salvando a locacao...	
