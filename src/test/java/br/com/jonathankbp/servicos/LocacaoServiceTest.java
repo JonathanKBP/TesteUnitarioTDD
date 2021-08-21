@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LocacaoService.class, DataUtils.class})
+@PrepareForTest(LocacaoService.class)
 public class LocacaoServiceTest {
 
     @InjectMocks
@@ -63,15 +63,21 @@ public class LocacaoServiceTest {
         Usuario usuario = umUsuario().agora();
         List<Filme> filmes = Arrays.asList(umFilme().comValor(5.0).agora());
 
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(20, 8, 2021));
+        //PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(20, 8, 2021));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 20);
+        calendar.set(Calendar.MONTH, Calendar.AUGUST);
+        calendar.set(Calendar.YEAR, 2021);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
 
         //acao
         Locacao locacao = service.alugarFilme(usuario, filmes);
 
         //verificação
         error.checkThat(locacao.getValor(), is(5.0));
-        error.checkThat(locacao.getDataLocacao(), ehHoje());
-        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
+//        error.checkThat(locacao.getDataLocacao(), ehHoje());
+//        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
         error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(20, 8, 2021)), is(true));
         error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(21, 8, 2021)), is(true));
     }
@@ -122,16 +128,24 @@ public class LocacaoServiceTest {
         Usuario usuario = umUsuario().agora();
         List<Filme>  filmes = Arrays.asList(umFilme().agora());
 
-        PowerMockito.whenNew(Date.class).withAnyArguments().thenReturn(DataUtils.obterData(21, 8, 2021));
+//        PowerMockito.whenNew(Date.class).withAnyArguments().thenReturn(DataUtils.obterData(21, 8, 2021));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 21);
+        calendar.set(Calendar.MONTH, Calendar.AUGUST);
+        calendar.set(Calendar.YEAR, 2021);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
 
         //acao
         Locacao retorno = service.alugarFilme(usuario, filmes);
 
         //vericacao
-        boolean ehSegunda = verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
-
         assertThat(retorno.getDataRetorno(), caiNumaSegunda());
-        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+//        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+
+        PowerMockito.verifyStatic(Calendar.class, Mockito.times(2));
+        Calendar.getInstance();
     }
 
    @Test
