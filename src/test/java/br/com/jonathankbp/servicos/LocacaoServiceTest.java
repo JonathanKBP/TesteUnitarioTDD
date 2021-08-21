@@ -9,10 +9,7 @@ import dao.LocacaoDAO;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -141,7 +138,7 @@ public class LocacaoServiceTest {
        //verificacao
            Assert.fail();
        } catch (LocadoraException e) {
-           Assert.assertThat(e.getMessage(), is("Usuário Negativado"));
+           assertThat(e.getMessage(), is("Usuário Negativado"));
        }
 
        verify(spc).possuiNegativacao(usuario);
@@ -185,7 +182,23 @@ public class LocacaoServiceTest {
 
        //Acao
        service.alugarFilme(usuario, filmes);
+   }
 
+   @Test
+    public void deveProrrogarUmaLocacao(){
+        //Cenario
+       Locacao locacao = umLocacao().agora();
 
+       //acao
+       service.prorrogarLocacao(locacao, 3);
+
+       //Verificacao
+       ArgumentCaptor<Locacao> argCapt = ArgumentCaptor.forClass(Locacao.class);
+       Mockito.verify(dao).salvar(argCapt.capture());
+       Locacao locacaoRetornado = argCapt.getValue();
+
+       error.checkThat(locacaoRetornado.getValor(), is(12.0));
+       error.checkThat(locacaoRetornado.getDataLocacao(), ehHoje());
+       error.checkThat(locacaoRetornado.getDataRetorno(), ehHojeComDiferencaDias(3));
    }
 }
