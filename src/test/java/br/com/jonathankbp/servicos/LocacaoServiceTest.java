@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 
 import static br.com.jonathankbp.builders.FilmeBuilder.umFilme;
@@ -26,7 +26,6 @@ import static br.com.jonathankbp.builders.FilmeBuilder.umFilmeSemEstoque;
 import static br.com.jonathankbp.builders.LocacaoBuilder.umLocacao;
 import static br.com.jonathankbp.builders.UsuarioBuilder.umUsuario;
 import static br.com.jonathankbp.matchers.MatchersProprios.*;
-import static br.com.jonathankbp.utils.DataUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -55,6 +54,7 @@ public class LocacaoServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        service = PowerMockito.spy(service);
     }
 
     @Test
@@ -224,5 +224,21 @@ public class LocacaoServiceTest {
        error.checkThat(locacaoRetornado.getValor(), is(12.0));
        error.checkThat(locacaoRetornado.getDataLocacao(), ehHoje());
        error.checkThat(locacaoRetornado.getDataRetorno(), ehHojeComDiferencaDias(3));
+   }
+
+   @Test
+    public void deveAlugarFilme_SemCalcularVAlor() throws Exception {
+        //Cenario
+        Usuario usuario = umUsuario().agora();
+        List<Filme> filmes = Arrays.asList(umFilme().agora());
+
+        PowerMockito.doReturn(1.0).when(service, "CalcularValorLocacao", filmes);
+
+       //acao
+       Locacao locacao = service.alugarFilme(usuario, filmes);
+
+       //verificacao
+       Assert.assertThat(locacao.getValor(), is(1.0));
+       PowerMockito.verifyPrivate(service).invoke("CalcularValorLocacao", filmes);
    }
 }
